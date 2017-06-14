@@ -12,5 +12,5 @@ import common.DependencyException;
  */
 
 public	interface Factory {
-    Object	create(Object...	parameters)	throws	DependencyException;
+    Object create(Object... parameters)	throws	DependencyException;
 }
