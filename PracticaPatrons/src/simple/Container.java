@@ -6,7 +6,6 @@
 package simple;
 
 import common.DependencyException;
-import exemples.ImplementationD1;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -14,11 +13,10 @@ import java.util.Map;
  *
  * @author vikton
  */
-public class Container implements Injector, Factory {
+public class Container implements Injector {
     
     Map<String, Object> mapconstant = new HashMap<>();
-    Map<String, Factory> mapfactory = new HashMap<>();
-//    Factory fa = new Factory();
+    Map<String, Object> mapfactory = new HashMap<>();
     
     @Override
     public void registerConstant(String name, Object value) throws DependencyException {
@@ -32,13 +30,16 @@ public class Container implements Injector, Factory {
     
     @Override
     public void registerFactory(String	name, Factory creator, String... parameters) throws DependencyException {
-        Object[] pars = parameters;
-        Object creat = create(pars);
+        Object[] pars = new Object[parameters.length];
+        for(int i = 0; i < parameters.length; i++) {
+            pars[i] = mapconstant.get(parameters[i]);
+        }
+        
         if (mapfactory.containsKey(name)) {
             throw new DependencyException("This name is already registred");
         }
         else {
-            mapconstant.put(name, creator);
+            mapfactory.put(name, creator.create(pars));
         }
     }				
     
@@ -54,16 +55,5 @@ public class Container implements Injector, Factory {
             throw new DependencyException("No object with this name");
         }
     }
-    
-    @Override
-    public Object create(Object... parameters)	throws	DependencyException {
-	try{	
-	int i = (int) parameters[0];	
-        //String str2 = (String) parameters[1];
-        return new ImplementationD1 (i);
-	} 
-        catch (ClassCastException | ArrayIndexOutOfBoundsException ex) {	
-        throw new DependencyException(ex);	
-	}		
-    }
+
 }
