@@ -6,6 +6,7 @@
 package simple;
 
 import common.DependencyException;
+import exemples.ImplementationD1;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -17,6 +18,7 @@ public class Container implements Injector, Factory {
     
     Map<String, Object> mapconstant = new HashMap<>();
     Map<String, Factory> mapfactory = new HashMap<>();
+//    Factory fa = new Factory();
     
     @Override
     public void registerConstant(String name, Object value) throws DependencyException {
@@ -31,14 +33,12 @@ public class Container implements Injector, Factory {
     @Override
     public void registerFactory(String	name, Factory creator, String... parameters) throws DependencyException {
         Object[] pars = parameters;
-        create (pars);
-
+        Object creat = create(pars);
         if (mapfactory.containsKey(name)) {
             throw new DependencyException("This name is already registred");
         }
         else {
             mapconstant.put(name, creator);
-
         }
     }				
     
@@ -57,6 +57,13 @@ public class Container implements Injector, Factory {
     
     @Override
     public Object create(Object... parameters)	throws	DependencyException {
-        return 1;
+	try{	
+	int i = (int) parameters[0];	
+        //String str2 = (String) parameters[1];
+        return new ImplementationD1 (i);
+	} 
+        catch (ClassCastException | ArrayIndexOutOfBoundsException ex) {	
+        throw new DependencyException(ex);	
+	}		
     }
 }
