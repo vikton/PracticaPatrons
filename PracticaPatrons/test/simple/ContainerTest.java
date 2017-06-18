@@ -22,12 +22,35 @@ public class ContainerTest {
     }
     
     @Test
+    public void testInjectorFA1() throws DependencyException {
+        System.out.println("testinjectorIniciA");
+        Injector injector = new Container();
+        InterfaceD d = (InterfaceD) new FactoryD1().create(2);
+        InterfaceB b = (InterfaceB) new FactoryB1().create(d);
+        InterfaceC c = (InterfaceC) new FactoryC1().create("factoryc");
+        
+        injector.registerConstant("P", b);
+        injector.registerConstant("Y", c);
+        injector.registerFactory("A", new FactoryA1(), "P", "Y");
+        
+        InterfaceA a = (InterfaceA) injector.getObject("A");
+        
+        assertThat(a, is(instanceOf(ImplementationA1.class)));
+        ImplementationA1 a1 = (ImplementationA1) a;
+        
+        assertThat(a1.b, is(b));
+        assertThat(a1.c, is(c));
+        System.out.println("testinjectorFinalA");
+        
+    }
+    
+    @Test
     public void testInjectorFB1() throws DependencyException {
         System.out.println("testinjectorIniciB");
         Injector injector = new Container();
-        InterfaceD d = (InterfaceD) new FactoryB1().create(2);
+        InterfaceD d = (InterfaceD) new FactoryD1().create(2);
         
-        injector.registerConstant("K", 2);
+        injector.registerConstant("K", d);
         injector.registerFactory("J", new FactoryB1(), "K");
         
         InterfaceB b = (InterfaceB) injector.getObject("J");
@@ -80,10 +103,39 @@ public class ContainerTest {
         Object value = 463;
         Container con = new Container();
         con.registerConstant("I", value);
+        
         assertEquals(463, (Object) con.mapconstant.get("I"));
-        // TODO review the generated test code and remove the default call to fail.
-        // fail("The test case is a prototype.");
         System.out.println("registerConstantFinal");
     }
     
+    @Test (expected=DependencyException.class)
+    public void ExceptionRegisterConstant() throws Exception {
+        System.out.println("registerConstantExceptionInici");
+        Object value = 463;
+        Container con = new Container();
+        con.registerConstant("V", value);
+        con.registerConstant("V", value);
+        System.out.println("registerConstantExceptionFinal");
+    }
+    
+    @Test (expected=DependencyException.class)
+    public void ExceptionRegisterFactory() throws Exception {
+        System.out.println("registerFactoryExceptionInici");
+        Object value = 463;
+        Container con = new Container();
+        con.registerConstant("W", value);
+        con.registerFactory("V", new FactoryD1(), "W");
+        con.registerFactory("V", new FactoryD1(), "W");
+        System.out.println("registerFactoryExceptionFinal");
+    }
+    
+    @Test (expected=DependencyException.class)
+    public void ExceptionGetObject() throws Exception {
+        System.out.println("getObjectExceptionInici");
+        Object value = 463;
+        Container con = new Container();
+        con.registerConstant("W", value);
+        con.getObject("E");
+        System.out.println("getObjectFactoryExceptionFinal");
+    }
 }

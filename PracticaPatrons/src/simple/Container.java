@@ -17,6 +17,8 @@ public class Container implements Injector {
     
     Map<String, Object> mapconstant = new HashMap<>();
     Map<String, Object> mapfactory = new HashMap<>();
+    public Object[] pars;
+    
     
     @Override
     public void registerConstant(String name, Object value) throws DependencyException {
@@ -30,7 +32,7 @@ public class Container implements Injector {
     
     @Override
     public void registerFactory(String	name, Factory creator, String... parameters) throws DependencyException {
-        Object[] pars = new Object[parameters.length];
+        pars = new Object[parameters.length];
         for(int i = 0; i < parameters.length; i++) {
             pars[i] = mapconstant.get(parameters[i]);
         }
